@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приключение в Загреб!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Chosen Palette: Adriatic Sunset (Warm beige, muted teal, terracotta accents) -->
+    <!-- Application Structure Plan: A tabbed single-page application. Each tab represents a day of the trip or key information (like accommodation), revealing its content panel upon clicking. This structure was chosen to break down the itinerary into manageable, easy-to-navigate daily chunks, preventing information overload and providing a more interactive and app-like experience than a simple scrolling document. Day 4 uses interactive cards to present the choices visually. -->
+    <!-- Visualization & Content Choices: Itinerary -> Goal: Organize/Inform -> Viz: Tabbed Interface -> Interaction: Click to switch days -> Justification: Breaks down the plan chronologically and interactively. | Accommodation Address -> Goal: Provide Utility -> Viz: QR Code -> Interaction: Scan with phone -> Justification: Provides instant, error-free navigation on mobile. -> Library/Method: qrcode.js (CDN) to render on a canvas. | Day 4 Options -> Goal: Compare/Decide -> Viz: Interactive Cards -> Interaction: Hover effects -> Justification: Makes the choice more engaging and visually appealing than a simple list. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #FDFBF5;
+            color: #4A4A4A;
+        }
+        .tab-active {
+            background-color: #008080;
+            color: #FFFFFF;
+            border-color: #008080;
+        }
+        .tab-inactive {
+            background-color: #FFFFFF;
+            color: #008080;
+            border-color: #008080;
+        }
+        .content-panel {
+            display: none;
+        }
+        .content-panel.active {
+            display: block;
+        }
+        .option-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        #qrcode-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-teal-700">✨ Загреб: Пътешествието на годината! ✨</h1>
+            <p class="mt-4 text-lg text-gray-600">Здравейте, екипаж! 🚀 Ето нашия интерактивен план. Кликнете на табовете по-долу, за да видите програмата за всеки ден.</p>
+        </header>
+
+        <nav class="flex flex-wrap justify-center gap-2 mb-8">
+            <button data-tab="day1" class="tab-button text-sm md:text-base font-bold py-2 px-4 rounded-full border-2 transition-colors duration-300">Ден 1: 5 септември</button>
+            <button data-tab="day2" class="tab-button text-sm md:text-base font-bold py-2 px-4 rounded-full border-2 transition-colors duration-300">Ден 2: 6 септември</button>
+            <button data-tab="day3" class="tab-button text-sm md:text-base font-bold py-2 px-4 rounded-full border-2 transition-colors duration-300">Ден 3: 7 септември</button>
+            <button data-tab="day4" class="tab-button text-sm md:text-base font-bold py-2 px-4 rounded-full border-2 transition-colors duration-300">Ден 4: 8 септември</button>
+            <button data-tab="day5" class="tab-button text-sm md:text-base font-bold py-2 px-4 rounded-full border-2 transition-colors duration-300">Ден 5: 9 септември</button>
+            <button data-tab="accommodation" class="tab-button text-sm md:text-base font-bold py-2 px-4 rounded-full border-2 transition-colors duration-300">🏡 Настаняване</button>
+        </nav>
+
+        <main id="content-container" class="bg-white rounded-xl shadow-lg p-6 md:p-8 min-h-[400px]">
+            
+            <div id="day1" class="content-panel">
+                <h2 class="text-2xl font-bold text-teal-600 mb-4">Потегляме! 🗺️</h2>
+                <ul class="list-disc list-inside space-y-3 text-lg">
+                    <li><span class="font-bold">Рано сутринта:</span> Тръгваме от България! 🚗💨 Пригответе плейлистите и доброто настроение!</li>
+                    <li><span class="font-bold">Вечерта:</span> Пристигаме в Загреб и се настаняваме. Време е да разпуснем и да се подготвим за следващите дни. 🥳</li>
+                </ul>
+            </div>
+
+            <div id="day2" class="content-panel">
+                <h2 class="text-2xl font-bold text-teal-600 mb-4">Ден в Любляна 🏰🇸🇮</h2>
+                <p class="mb-4 text-lg">Днес се отправяме към приказната столица на Словения! Ето няколко идеи:</p>
+                <ul class="list-disc list-inside space-y-3 text-lg">
+                    <li><span class="font-bold">Люблянският замък:</span> Разходете се до върха за невероятна панорамна гледка.</li>
+                    <li><span class="font-bold">Троен мост (Tromostovje):</span> Емблематичен символ на града. 🌉</li>
+                    <li><span class="font-bold">Драконовият мост:</span> Не пропускайте да си направите снимка с драконите! 🐉🤳</li>
+                    <li><span class="font-bold">Разходка по река Любляница:</span> Насладете се на атмосферата с кафе или напитка край реката. ☕</li>
+                </ul>
+                <p class="mt-4 text-lg"><span class="font-bold">Вечерта:</span> Връщаме се в Загреб, готови за почивка.</p>
+            </div>
+
+            <div id="day3" class="content-panel">
+                <h2 class="text-2xl font-bold text-teal-600 mb-4">Загреб в детайли 🚶‍♀️🇭🇷</h2>
+                <p class="mb-4 text-lg">Днес се потапяме в магията на Загреб! Какво ще кажете за:</p>
+                <ul class="list-disc list-inside space-y-3 text-lg">
+                    <li><span class="font-bold">Площад Бан Йелачич:</span> Централният площад на града, идеална отправна точка. 📍</li>
+                    <li><span class="font-bold">Църквата "Свети Марк":</span> С нейния уникален цветен покрив е задължителна спирка.</li>
+                    <li><span class="font-bold">Каменната порта (Kamenita Vrata):</span> Посетете това свещено място с икона на Дева Мария. 🙏</li>
+                    <li><span class="font-bold">Музеят на разбитите връзки:</span> Едно от най-необичайните и трогателни преживявания в града.💔</li>
+                    <li><span class="font-bold">Пазарът Долац:</span> Потопете се в местната култура, като разгледате този оживен пазар. 🥕🍅</li>
+                </ul>
+            </div>
+
+            <div id="day4" class="content-panel">
+                <h2 class="text-2xl font-bold text-teal-600 mb-4">Приключение по избор! 🤔</h2>
+                <p class="mb-6 text-lg">Този ден е отворен за импровизации! Трябва да изберем една от тези три страхотни опции:</p>
+                <div class="grid md:grid-cols-3 gap-6 text-center">
+                    <div class="option-card bg-stone-100 rounded-lg p-4">
+                        <div class="text-5xl mb-2">🇦🇹</div>
+                        <h3 class="text-xl font-bold text-gray-800">Грац, Австрия</h3>
+                        <p class="text-gray-600 mt-2">Елегантна архитектура, замък на хълм и австрийски чар.</p>
+                    </div>
+                    <div class="option-card bg-stone-100 rounded-lg p-4">
+                        <div class="text-5xl mb-2">🌊</div>
+                        <h3 class="text-xl font-bold text-gray-800">Риека, Хърватия</h3>
+                        <p class="text-gray-600 mt-2">Оживен пристанищен град с морски бриз и адриатическа атмосфера.</p>
+                    </div>
+                    <div class="option-card bg-stone-100 rounded-lg p-4">
+                        <div class="text-5xl mb-2">🏞️</div>
+                        <h3 class="text-xl font-bold text-gray-800">Плитвички езера</h3>
+                        <p class="text-gray-600 mt-2">Спираща дъха природа, тюркоазени езера и каскадни водопади.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="day5" class="content-panel">
+                <h2 class="text-2xl font-bold text-teal-600 mb-4">До нови срещи! 👋</h2>
+                <ul class="list-disc list-inside space-y-3 text-lg">
+                    <li><span class="font-bold">Около 9 сутринта:</span> Потегляме обратно към България, заредени с невероятни спомени! 💖</li>
+                    <li>Време е да планираме следващото пътуване!</li>
+                </ul>
+            </div>
+
+            <div id="accommodation" class="content-panel">
+                <h2 class="text-2xl font-bold text-teal-600 mb-4">Нашето място: Studio Apartments City&Style</h2>
+                <p class="text-lg mb-4">Тук ще отмаряме след дългите разходки. За лесна навигация, сканирайте QR кода с телефона си или кликнете на линка.</p>
+                <div class="md:flex md:items-center md:gap-8">
+                    <div id="qrcode-container" class="mb-4 md:mb-0"></div>
+                    <div>
+                         <a href="https://www.google.com/maps?q=45.810365,15.985257" target="_blank" class="inline-block bg-teal-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-700 transition-colors">
+                            Отвори в Google Maps
+                        </a>
+                        <p class="mt-4 text-gray-600">Координати: 45.810365, 15.985257</p>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <footer class="text-center mt-8 text-gray-500">
+            <p>Направено с 💙 за най-якото пътуване!</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabs = document.querySelectorAll('.tab-button');
+            const contentPanels = document.querySelectorAll('.content-panel');
+
+            function switchTab(tabId) {
+                tabs.forEach(tab => {
+                    if (tab.dataset.tab === tabId) {
+                        tab.classList.add('tab-active');
+                        tab.classList.remove('tab-inactive');
+                    } else {
+                        tab.classList.remove('tab-active');
+                        tab.classList.add('tab-inactive');
+                    }
+                });
+
+                contentPanels.forEach(panel => {
+                    if (panel.id === tabId) {
+                        panel.classList.add('active');
+                    } else {
+                        panel.classList.remove('active');
+                    }
+                });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    switchTab(tab.dataset.tab);
+                });
+            });
+
+            switchTab('day1');
+
+            new QRCode(document.getElementById("qrcode-container"), {
+                text: "https://www.google.com/maps?q=45.810365,15.985257",
+                width: 128,
+                height: 128,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+        });
+    </script>
+
+</body>
+</html>
